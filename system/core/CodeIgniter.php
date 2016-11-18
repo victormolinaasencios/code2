@@ -1,67 +1,7 @@
-<?php
-
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 	const CI_VERSION = '3.1.1';
-
-	if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/constants.php'))
-	{
-		require_once(APPPATH.'config/'.ENVIRONMENT.'/constants.php');
-	}
-
 	require_once('application/config/constants.php');
 	require_once('system/core/Common.php');
-
-
-/*
- * ------------------------------------------------------
- * Security procedures
- * ------------------------------------------------------
- */
-
-if ( ! is_php('5.4'))
-{
-	ini_set('magic_quotes_runtime', 0);
-
-	if ((bool) ini_get('register_globals'))
-	{
-		$_protected = array(
-			'_SERVER',
-			'_GET',
-			'_POST',
-			'_FILES',
-			'_REQUEST',
-			'_SESSION',
-			'_ENV',
-			'_COOKIE',
-			'GLOBALS',
-			'HTTP_RAW_POST_DATA',
-			'system_path',
-			'application_folder',
-			'view_folder',
-			'_protected',
-			'_registered'
-		);
-
-		$_registered = ini_get('variables_order');
-		foreach (array('E' => '_ENV', 'G' => '_GET', 'P' => '_POST', 'C' => '_COOKIE', 'S' => '_SERVER') as $key => $superglobal)
-		{
-			if (strpos($_registered, $key) === FALSE)
-			{
-				continue;
-			}
-
-			foreach (array_keys($$superglobal) as $var)
-			{
-				if (isset($GLOBALS[$var]) && ! in_array($var, $_protected, TRUE))
-				{
-					$GLOBALS[$var] = NULL;
-				}
-			}
-		}
-	}
-}
-
-
 /*
  * ------------------------------------------------------
  *  Define a custom error handler so we can log PHP errors
@@ -97,7 +37,7 @@ if ( ! is_php('5.4'))
  *  Should we use a Composer autoloader?
  * ------------------------------------------------------
  */
-	if ($composer_autoload = config_item('composer_autoload'))
+	/*if ($composer_autoload = config_item('composer_autoload'))
 	{
 		if ($composer_autoload === TRUE)
 		{
@@ -113,24 +53,24 @@ if ( ! is_php('5.4'))
 		{
 			log_message('error', 'Could not find the specified $config[\'composer_autoload\'] path: '.$composer_autoload);
 		}
-	}
+	}*/
 
 /*
  * ------------------------------------------------------
  *  Start the timer... tick tock tick tock...
  * ------------------------------------------------------
  */
-echo"paso el common";
 	$BM =& load_class('Benchmark', 'core');
 	$BM->mark('total_execution_time_start');
 	$BM->mark('loading_time:_base_classes_start');
-exit();
+	//var_dump($BM->mark);
 /*
  * ------------------------------------------------------
  *  Instantiate the hooks class
  * ------------------------------------------------------
  */
 	$EXT =& load_class('Hooks', 'core');
+
 
 /*
  * ------------------------------------------------------
@@ -177,6 +117,7 @@ exit();
 	$charset = strtoupper(config_item('charset'));
 	ini_set('default_charset', $charset);
 
+
 	if (extension_loaded('mbstring'))
 	{
 		define('MB_ENABLED', TRUE);
@@ -186,6 +127,7 @@ exit();
 		// This is required for mb_convert_encoding() to strip invalid characters.
 		// That's utilized by CI_Utf8, but it's also done for consistency with iconv.
 		mb_substitute_character('none');
+
 	}
 	else
 	{
@@ -216,9 +158,8 @@ exit();
  *  Load compatibility features
  * ------------------------------------------------------
  */
-
-	require_once(BASEPATH.'core/compat/mbstring.php');
 	require_once(BASEPATH.'core/compat/hash.php');
+	require_once(BASEPATH.'core/compat/mbstring.php');
 	require_once(BASEPATH.'core/compat/password.php');
 	require_once(BASEPATH.'core/compat/standard.php');
 
@@ -243,6 +184,7 @@ exit();
  */
 	$RTR =& load_class('Router', 'core', isset($routing) ? $routing : NULL);
 
+
 /*
  * ------------------------------------------------------
  *  Instantiate the output class
@@ -259,7 +201,6 @@ exit();
 	{
 		exit;
 	}
-
 /*
  * -----------------------------------------------------
  * Load the security class for xss and csrf support
@@ -280,7 +221,6 @@ exit();
  * ------------------------------------------------------
  */
 	$LANG =& load_class('Lang', 'core');
-
 /*
  * ------------------------------------------------------
  *  Load the app controller and local controller
@@ -304,7 +244,7 @@ exit();
 
 	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php'))
 	{
-		require_once APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php';
+		echo"se comento esta linea";//require_once APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php';
 	}
 
 	// Set a mark point for benchmarking
@@ -358,6 +298,7 @@ exit();
 		}
 	}
 
+print_r(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
 	if ($e404)
 	{
 		if ( ! empty($RTR->routes['404_override']))
@@ -379,6 +320,7 @@ exit();
 				// Were we in a directory? If so, check for a global override
 				elseif ( ! empty($RTR->directory) && file_exists(APPPATH.'controllers/'.$error_class.'.php'))
 				{
+print_r(APPPATH.'controllers/'.$error_class.'.php');
 					require_once(APPPATH.'controllers/'.$error_class.'.php');
 					if (($e404 = ! class_exists($error_class, FALSE)) === FALSE)
 					{
@@ -431,14 +373,14 @@ exit();
 
 	$CI = new $class();
 
+
 /*
  * ------------------------------------------------------
  *  Is there a "post_controller_constructor" hook?
  * ------------------------------------------------------
  */
 	$EXT->call_hook('post_controller_constructor');
-
-/*
+/*echo" <br/>final de la alinea<br/>"; exit();
  * ------------------------------------------------------
  *  Call the requested method
  * ------------------------------------------------------
@@ -447,6 +389,7 @@ exit();
 
 	// Mark a benchmark end point
 	$BM->mark('controller_execution_time_( '.$class.' / '.$method.' )_end');
+
 
 /*
  * ------------------------------------------------------

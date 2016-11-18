@@ -132,6 +132,8 @@ class CI_Router {
 		is_array($routing) && isset($routing['directory']) && $this->set_directory($routing['directory']);
 		$this->_set_routing();
 
+
+
 		// Set any routing overrides that may exist in the main index file
 		if (is_array($routing))
 		{
@@ -153,7 +155,7 @@ class CI_Router {
 	 * @return	void
 	 */
 	protected function _set_routing()
-	{
+	{ 
 		// Load the routes.php file. It would be great if we could
 		// skip this for enable_query_strings = TRUE, but then
 		// default_controller would be empty ...
@@ -166,7 +168,6 @@ class CI_Router {
 		{
 			include(APPPATH.'config/'.ENVIRONMENT.'/routes.php');
 		}
-
 		// Validate & get reserved routes
 		if (isset($route) && is_array($route))
 		{
@@ -219,9 +220,9 @@ class CI_Router {
 
 			// Routing rules don't apply to query strings and we don't need to detect
 			// directories, so we're done here
+
 			return;
 		}
-
 		// Is there anything to parse?
 		if ($this->uri->uri_string !== '')
 		{
@@ -230,7 +231,7 @@ class CI_Router {
 		else
 		{
 			$this->_set_default_controller();
-		}
+		} 
 	}
 
 	// --------------------------------------------------------------------
@@ -289,6 +290,7 @@ class CI_Router {
 	 */
 	protected function _set_default_controller()
 	{
+
 		if (empty($this->default_controller))
 		{
 			show_error('Unable to determine what should be displayed. A default route has not been specified in the routing file.');
@@ -494,8 +496,8 @@ class CI_Router {
 		{
 			$this->directory .= str_replace('.', '', trim($dir, '/')).'/';
 		}
-	}
 
+	}
 	// --------------------------------------------------------------------
 
 	/**

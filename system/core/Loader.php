@@ -1,4 +1,4 @@
-<?php
+<?php //echo "no puedes continuar";exit();
 /**
  * CodeIgniter
  *
